@@ -161,15 +161,25 @@ async function persistDecline({
 }
 
 function detectCardBrand(cardNumber) {
-  if (/^4\d{12}(\d{3})?$/.test(cardNumber)) {
+
+  if (cardNumber.startsWith('4')) {
     return 'visa';
   }
 
-  if (isMastercard(cardNumber)) {
+  const prefix2 = Number(cardNumber.slice(0, 2));
+  const prefix4 = Number(cardNumber.slice(0, 4));
+
+  if (
+    (prefix2 >= 51 && prefix2 <= 55) ||
+    (prefix4 >= 2221 && prefix4 <= 2720)
+  ) {
     return 'mastercard';
   }
 
-  if (/^3[47]\d{13}$/.test(cardNumber)) {
+  if (
+    cardNumber.startsWith('34') ||
+    cardNumber.startsWith('37')
+  ) {
     return 'amex';
   }
 
