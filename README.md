@@ -43,6 +43,7 @@ npm test
 src/
 ├── config/
 │   └── db.js
+│   └── env.js
 ├── controllers/
 │   ├── auth.controller.js
 │   └── payment.controller.js
