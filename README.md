@@ -346,3 +346,12 @@ Incluye:
 * Casos de error.
 * Referencias duplicadas.
 * Autenticación.
+  
+## Nota para el evaluador
+
+1. Ejecutar primero la petición **Endpoint de Autenticación**.
+2. Copiar el valor de `access_token` obtenido.
+3. Reemplazar el token utilizado en las peticiones protegidas.
+4. Ejecutar las pruebas del endpoint `/payments/charge`.
+
+Esto garantiza que todas las solicitudes se realicen con un JWT válido.
