@@ -1,0 +1,578 @@
+{
+  "info": {
+    "_postman_id": "8c033411-7e68-4651-8238-d0b9d07a046f",
+    "name": "Payment Flow API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "39377171"
+  },
+  "item": [
+    {
+      "name": "Autenticación",
+      "item": [
+        {
+          "name": "Endpoint de Autenticación",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "// Probamos Endpoint de Autenticación \r\n{\r\n  \"client_id\": \"payment_client\",\r\n  \"client_secret\": \"s3cr3t_key\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/auth/token",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "auth",
+                "token"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Credenciales Incorrectas",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "// Probamos credenciales incorrectas\r\n{\r\n  \"client_id\": \"bad\",\r\n  \"client_secret\": \"bad\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/auth/token",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "auth",
+                "token"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Token Inválido",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "token-invalido",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "// Probamos el manejo de error al enviar un token inválido\r\n{\r\n  \"reference\": \"PAY100\",\r\n  \"amount\": 50,\r\n  \"currency\": \"USD\",\r\n  \"card\": {\r\n    \"number\": \"4111111111111111\",\r\n    \"holder\": \"TEST USER\",\r\n    \"expiry\": \"12/29\",\r\n    \"cvv\": \"123\"\r\n  }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/payments/charge",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "payments",
+                "charge"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Sin Autorización",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "// Probamos el majeo de error al no pasarle el heard de autorización\r\n{\r\n  \"reference\": \"PAY101\",\r\n  \"amount\": 50,\r\n  \"currency\": \"USD\",\r\n  \"card\": {\r\n    \"number\": \"4111111111111111\",\r\n    \"holder\": \"TEST USER\",\r\n    \"expiry\": \"12/29\",\r\n    \"cvv\": \"123\"\r\n  }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/payments/charge",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "payments",
+                "charge"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Auth+Whitelist",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRfaWQiOiJwYXltZW50X2NsaWVudCIsImlhdCI6MTc4MDEwNzkzMSwiZXhwIjoxNzgwMTExNTMxfQ.Y0tzJS5EdSBcPSDDPdykFSBk2tce4mcagGpWklFDHSo",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "// Probamos autenticación protegida, usando la Whitelist\r\n{\r\n  \"reference\": \"PAY001\",\r\n  \"amount\": 50,\r\n  \"currency\": \"USD\",\r\n  \"card\": {\r\n    \"number\": \"4111111111111111\",\r\n    \"holder\": \"TEST USER\",\r\n    \"expiry\": \"12/29\",\r\n    \"cvv\": \"123\"\r\n  }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/payments/charge",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "payments",
+                "charge"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Refencia muy Corta",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRfaWQiOiJwYXltZW50X2NsaWVudCIsImlhdCI6MTc4MDEwNzkzMSwiZXhwIjoxNzgwMTExNTMxfQ.Y0tzJS5EdSBcPSDDPdykFSBk2tce4mcagGpWklFDHSo",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "// Probamos enviar una refencia muy corta\r\n{\r\n  \"reference\": \"ABC\",\r\n  \"amount\": 50,\r\n  \"currency\": \"USD\",\r\n  \"card\": {\r\n    \"number\": \"4111111111111111\",\r\n    \"holder\": \"TEST USER\",\r\n    \"expiry\": \"12/29\",\r\n    \"cvv\": \"123\"\r\n  }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/payments/charge",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "payments",
+                "charge"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Amount Negativo",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRfaWQiOiJwYXltZW50X2NsaWVudCIsImlhdCI6MTc4MDEwNzkzMSwiZXhwIjoxNzgwMTExNTMxfQ.Y0tzJS5EdSBcPSDDPdykFSBk2tce4mcagGpWklFDHSo",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "// Probamos enviar un amount negativo\r\n{\r\n  \"reference\": \"PAY200\",\r\n  \"amount\": -10,\r\n  \"currency\": \"USD\",\r\n  \"card\": {\r\n    \"number\": \"4111111111111111\",\r\n    \"holder\": \"TEST USER\",\r\n    \"expiry\": \"12/29\",\r\n    \"cvv\": \"123\"\r\n  }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/payments/charge",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "payments",
+                "charge"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Rechazo por Monto",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRfaWQiOiJwYXltZW50X2NsaWVudCIsImlhdCI6MTc4MDEwNzkzMSwiZXhwIjoxNzgwMTExNTMxfQ.Y0tzJS5EdSBcPSDDPdykFSBk2tce4mcagGpWklFDHSo",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "// Probamos rechazo por monto\r\n{\r\n  \"reference\": \"PAY002\",\r\n  \"amount\": 5,\r\n  \"currency\": \"USD\",\r\n  \"card\": {\r\n    \"number\": \"4000000000000002\",\r\n    \"holder\": \"JOHN DOE\",\r\n    \"expiry\": \"12/29\",\r\n    \"cvv\": \"123\"\r\n  }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/payments/charge",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "payments",
+                "charge"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CVV Incorrecto (Amex)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRfaWQiOiJwYXltZW50X2NsaWVudCIsImlhdCI6MTc4MDEwNzkzMSwiZXhwIjoxNzgwMTExNTMxfQ.Y0tzJS5EdSBcPSDDPdykFSBk2tce4mcagGpWklFDHSo",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "// Probamos enviar un CVV incorrecto para Amex\r\n{\r\n  \"reference\": \"PAY202\",\r\n  \"amount\": 50,\r\n  \"currency\": \"USD\",\r\n  \"card\": {\r\n    \"number\": \"378282246310005\",\r\n    \"holder\": \"AMEX USER\",\r\n    \"expiry\": \"12/29\",\r\n    \"cvv\": \"123\"\r\n  }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/payments/charge",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "payments",
+                "charge"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CVV Incorrecto (Visa)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRfaWQiOiJwYXltZW50X2NsaWVudCIsImlhdCI6MTc4MDEwNzkzMSwiZXhwIjoxNzgwMTExNTMxfQ.Y0tzJS5EdSBcPSDDPdykFSBk2tce4mcagGpWklFDHSo",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "// Probamos enviar un CVV incorrecto para Visa\r\n{\r\n  \"reference\": \"PAY201\",\r\n  \"amount\": 50,\r\n  \"currency\": \"USD\",\r\n  \"card\": {\r\n    \"number\": \"4111111111111111\",\r\n    \"holder\": \"TEST USER\",\r\n    \"expiry\": \"12/29\",\r\n    \"cvv\": \"1234\"\r\n  }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/payments/charge",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "payments",
+                "charge"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Fecha Vencida",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRfaWQiOiJwYXltZW50X2NsaWVudCIsImlhdCI6MTc4MDEwNzkzMSwiZXhwIjoxNzgwMTExNTMxfQ.Y0tzJS5EdSBcPSDDPdykFSBk2tce4mcagGpWklFDHSo",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "// Probamos enviar una fecha vencida\r\n{\r\n  \"reference\": \"PAY203\",\r\n  \"amount\": 50,\r\n  \"currency\": \"USD\",\r\n  \"card\": {\r\n    \"number\": \"4111111111111111\",\r\n    \"holder\": \"TEST USER\",\r\n    \"expiry\": \"01/20\",\r\n    \"cvv\": \"123\"\r\n  }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/payments/charge",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "payments",
+                "charge"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Monto Menor a 10",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRfaWQiOiJwYXltZW50X2NsaWVudCIsImlhdCI6MTc4MDEwNzkzMSwiZXhwIjoxNzgwMTExNTMxfQ.Y0tzJS5EdSBcPSDDPdykFSBk2tce4mcagGpWklFDHSo",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "// Probamos enviar un monto menor a 10USD\r\n{\r\n  \"reference\": \"PAY204\",\r\n  \"amount\": 5,\r\n  \"currency\": \"USD\",\r\n  \"card\": {\r\n    \"number\": \"4000000000000002\",\r\n    \"holder\": \"JOHN DOE\",\r\n    \"expiry\": \"12/29\",\r\n    \"cvv\": \"123\"\r\n  }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/payments/charge",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "payments",
+                "charge"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Monto Mayor a 100",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRfaWQiOiJwYXltZW50X2NsaWVudCIsImlhdCI6MTc4MDEwNzkzMSwiZXhwIjoxNzgwMTExNTMxfQ.Y0tzJS5EdSBcPSDDPdykFSBk2tce4mcagGpWklFDHSo",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "// Probamos enviar un monto mayor a 100USD\r\n{\r\n  \"reference\": \"PAY205\",\r\n  \"amount\": 150,\r\n  \"currency\": \"USD\",\r\n  \"card\": {\r\n    \"number\": \"4000000000000002\",\r\n    \"holder\": \"JOHN DOE\",\r\n    \"expiry\": \"12/29\",\r\n    \"cvv\": \"123\"\r\n  }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/payments/charge",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "payments",
+                "charge"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Marca No Soportada",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRfaWQiOiJwYXltZW50X2NsaWVudCIsImlhdCI6MTc4MDEwNzkzMSwiZXhwIjoxNzgwMTExNTMxfQ.Y0tzJS5EdSBcPSDDPdykFSBk2tce4mcagGpWklFDHSo",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "// Probamos enviar una marca no soportada\r\n{\r\n  \"reference\": \"PAY206\",\r\n  \"amount\": 50,\r\n  \"currency\": \"USD\",\r\n  \"card\": {\r\n    \"number\": \"6011000990139424\",\r\n    \"holder\": \"TEST USER\",\r\n    \"expiry\": \"12/29\",\r\n    \"cvv\": \"123\"\r\n  }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/payments/charge",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "payments",
+                "charge"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Referencia Duplicada",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRfaWQiOiJwYXltZW50X2NsaWVudCIsImlhdCI6MTc4MDEwNzkzMSwiZXhwIjoxNzgwMTExNTMxfQ.Y0tzJS5EdSBcPSDDPdykFSBk2tce4mcagGpWklFDHSo",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "// Probamos referencia duplicada\r\n{\r\n  \"reference\": \"PAY001\",\r\n  \"amount\": 50,\r\n  \"currency\": \"USD\",\r\n  \"card\": {\r\n    \"number\": \"4111111111111111\",\r\n    \"holder\": \"TEST USER\",\r\n    \"expiry\": \"12/29\",\r\n    \"cvv\": \"123\"\r\n  }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3000/payments/charge",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "payments",
+                "charge"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
